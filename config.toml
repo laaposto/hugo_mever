@@ -1,7 +1,0 @@
-baseURL = 'http://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = 'starter-hugo-research-group'
-[module]
-[[module.imports]]
-  path = 'github.com/wowchemy/wowchemy-hugo-themes/modules/wowchemy/v5'
