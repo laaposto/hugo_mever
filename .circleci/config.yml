@@ -1,26 +1,65 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: cibuilds/hugo:latest
+     # more environment variables used in this script are stored in the project setting page
     steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+
+      # checkout the repository
+      - checkout
+
+      # install git submodules for managing third-party dependencies
+      - run: git submodule sync && git submodule update --init
+
+      # clean hugo stuff
+      - run: hugo mod clean
+
+      # build with Hugo
+      - run: mkdir -p workspace
+      - run: HUGO_ENV=production hugo -v -d workspace/hugo_output
+
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - hugo_output
+
+      - run: ls -lah
+
+  deploy:
+    docker:
+      - image: cibuilds/hugo:latest
+    working_directory: /home/circleci/hugo
+    environment: # more environment variables used in this script are stored in the project setting page
+      HUGO_OUTPUT_PATH: /home/circleci/hugo/public
+    steps:
+
+      - checkout
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+
+      - run: ls -lah
+
+      # install necessary packages
+      - run: sudo apt install expect
+
+      # copy files
+      - run: expect upload_to_server_with_duo_2fa.expect $DEPLOY_USERNAME $DEPLOY_PASSWORD $DEPLOY_JUMP_HOSTNAME $DEPLOY_HOSTNAME /tmp/workspace/hugo_output $DEPLOY_DEST_PATH
+
 workflows:
-  say-hello-workflow:
+  build_and_deploy:
     jobs:
-      - say-hello
+      - build
+      - deploy:
+          requires:
+            - build
+          filters: # only deploy when branch is prod
+            branches:
+              only:
+                - prod
