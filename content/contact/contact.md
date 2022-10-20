@@ -16,11 +16,7 @@ content:
   # Contact (edit or remove options as required)
 
   email: test@example.org
-<<<<<<< HEAD
-  phone: 123
-=======
   phone: 123321321
->>>>>>> 5d1a71a4a8503e294d95e6b5069d1bc9c750a356
   address:
     street: 450 Serra Mall
     city: Stanford
