@@ -9,10 +9,7 @@ jobs:
     working_directory: ~/hugo
     environment:
       HUGO_BUILD_DIR: ~/hugo/public
-    steps:
-
-      # install git
-      - run: apk update && apk add git
+    steps
 
       # checkout the repository
       - checkout
