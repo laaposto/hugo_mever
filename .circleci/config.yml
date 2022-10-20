@@ -9,7 +9,7 @@ jobs:
     working_directory: ~/hugo
     environment:
       HUGO_BUILD_DIR: ~/hugo/public
-    steps
+    steps:
 
       # checkout the repository
       - checkout
