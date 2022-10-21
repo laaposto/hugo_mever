@@ -1,24 +1,65 @@
+version: 2.1
 jobs:
+  build:
+    docker:
+      - image: cibuilds/hugo:latest
+     # more environment variables used in this script are stored in the project setting page
+    steps:
+
+
+      # checkout the repository
+      - checkout
+
+      # install git submodules for managing third-party dependencies
+      - run: git submodule sync && git submodule update --init
+
+      # clean hugo stuff
+      - run: hugo mod clean
+
+      # build with Hugo
+      - run: mkdir -p workspace
+      - run: HUGO_ENV=production hugo -v -d workspace/hugo_output
+
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - hugo_output
+
+      - run: ls -lah
+
   deploy:
     docker:
-      - image: cimg/base
+      - image: cibuilds/hugo:latest
+    working_directory: /home/circleci/hugo
+    environment: # more environment variables used in this script are stored in the project setting page
+      HUGO_OUTPUT_PATH: /home/circleci/hugo/public
     steps:
+
+      - checkout
       - attach_workspace:
-          at: /
-      - run: ls -lah /
-orbs:
-  hugo: circleci/hugo@0.2
-version: 2.1
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+
+      - run: ls -lah
+
+      # install necessary packages
+      - run: sudo apt install expect
+
+      # copy files
+      - run: expect upload_to_server_with_duo_2fa.expect $DEPLOY_USERNAME $DEPLOY_PASSWORD $DEPLOY_JUMP_HOSTNAME $DEPLOY_HOSTNAME /tmp/workspace/hugo_output $DEPLOY_DEST_PATH
+
 workflows:
-  main:
+  build_and_deploy:
     jobs:
-      - hugo/build:
-          html-proofer: false
-          source: /
-          version: '0.55'
+      - build
       - deploy:
-          filters:
-            branches:
-              only: main
           requires:
-            - hugo/build
+            - build
+          filters: # only deploy when branch is prod
+            branches:
+              only:
+                - main
