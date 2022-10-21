@@ -47,7 +47,7 @@ jobs:
       - run: ls -lah
 
       # copy files
-      - run: cp -R /tmp/workspace/hugo_output /
+      - run: git pull
 
 workflows:
   build_and_deploy:
