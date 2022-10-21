@@ -16,7 +16,7 @@ content:
   # Contact (edit or remove options as required)
 
   email: test@example.org
-  phone: 123321321
+  phone: now
   address:
     street: 450 Serra Mall
     city: Stanford
