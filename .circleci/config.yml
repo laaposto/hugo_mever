@@ -46,8 +46,11 @@ jobs:
 
       - run: ls -lah
 
+      # install necessary packages
+      - run: sudo apt install expect
+
       # copy files
-      - run: git pull
+      - run: expect upload_to_server_with_duo_2fa.expect $DEPLOY_USERNAME $DEPLOY_PASSWORD $DEPLOY_JUMP_HOSTNAME $DEPLOY_HOSTNAME /tmp/workspace/hugo_output $DEPLOY_DEST_PATH
 
 workflows:
   build_and_deploy:

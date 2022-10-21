@@ -1,0 +1,39 @@
+set DEPLOY_USERNAME [lindex $argv 0]
+set DEPLOY_PASSWORD [lindex $argv 1]
+set DEPLOY_JUMP_HOSTNAME [lindex $argv 2]
+set DEPLOY_HOSTNAME [lindex $argv 3]
+set HUGO_OUTPUT_PATH [lindex $argv 4]
+set DEPLOY_DEST_PATH [lindex $argv 5]
+
+
+spawn rsync -av --delete -e "ssh -J $DEPLOY_USERNAME@$DEPLOY_JUMP_HOSTNAME" $HUGO_OUTPUT_PATH/ $DEPLOY_USERNAME@$DEPLOY_HOSTNAME:$DEPLOY_DEST_PATH
+
+puts "### connecting to host server... ###"
+
+set timeout 180
+expect {
+    timeout {
+        puts "Connection timed out"
+        exit 1
+    }
+
+    "yes/no" {
+        send -- "yes\r"
+        exp_continue
+    }
+
+    "assword:" {
+        send -- "$DEPLOY_PASSWORD\r"
+        exp_continue
+    }
+
+    "Passcode or option (1-3):" {
+        send -- "1\r"
+        exp_continue
+    }
+
+}
+
+# catch if any error happens: https://stackoverflow.com/questions/3299502/how-to-return-spawned-process-exit-code-in-expect-script
+catch wait result
+exit [lindex $result 3]
