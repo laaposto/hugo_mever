@@ -7,7 +7,6 @@ jobs:
     environment:
       HUGO_BUILD_DIR: ~/hugo/hugo_mever
     steps:
-      - run: apt-get update && apt-get install -y --no-install-recommends git
       - checkout
       - run: git submodule sync && git submodule update --init
       - run: curl -L https://github.com/bep/s3deploy/releases/download/v2.0.1/s3deploy_2.0.1_Linux-64bit.tar.gz | tar xvz
