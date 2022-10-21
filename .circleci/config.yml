@@ -4,8 +4,8 @@ jobs:
       - image: cimg/base
     steps:
       - attach_workspace:
-          at: ~/hugo/hugo_mever
-      - run: ls -lah ~/hugo/hugo_mever
+          at: /home/laaposto/hugo/hugo_mever
+      - run: ls -lah /home/laaposto/hugo/hugo_mever
 orbs:
   hugo: circleci/hugo@0.2
 version: 2.1
@@ -14,7 +14,7 @@ workflows:
     jobs:
       - hugo/build:
           html-proofer: false
-          source: ~/hugo/hugo_mever
+          source: /home/laaposto/hugo/hugo_mever
           version: '0.55'
       - deploy:
           filters:
