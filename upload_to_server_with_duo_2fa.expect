@@ -22,7 +22,7 @@ expect {
         exp_continue
     }
 
-    "assword:" {
+    "password:" {
         send -- "$DEPLOY_PASSWORD\r"
         exp_continue
     }
