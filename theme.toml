@@ -39,3 +39,7 @@ features = ["page builder", "widgets", "themes", "search", "research publication
 [author]
   name = "George Cushen"
   homepage = "https://georgecushen.com"
+
+[module]
+[[module.imports]]
+  path = 'github.com/wowchemy/wowchemy-hugo-themes/modules/wowchemy-seo v0.1.0'
