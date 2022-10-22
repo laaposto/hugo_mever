@@ -1,7 +1,7 @@
 ---
 title: Symeon Papadopoulos
 role: Visitor
-avatar_filename: flag_of_europe.png
+avatar_filename: avatar.jpg
 bio: bio
 social: []
 organizations: []
