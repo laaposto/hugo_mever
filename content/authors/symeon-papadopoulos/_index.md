@@ -1,6 +1,6 @@
 ---
 title: Symeon Papadopoulos
-role: Head
+role: Visitor
 avatar_filename: flag_of_europe.png
 bio: bio
 social: []
