@@ -7,6 +7,6 @@ social: []
 organizations: []
 superuser: false
 user_groups:
-  - Visitor
+  - Visitors
 ---
 w﻿hat ever you want
